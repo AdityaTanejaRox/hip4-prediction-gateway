@@ -1,0 +1,14 @@
+node_id: "router-1"
+
+grpc_listen_addr: ":50070"
+
+aggregator:
+  address: "aggregator:50060"
+
+markets:
+  - "HIP4_TESTNET_BTC_OUTCOME"
+
+routing:
+  min_net_edge_bps: 25
+  default_fee_bps: 5
+  default_slippage_bps: 10

@@ -1,0 +1,18 @@
+node_id: "aggregator-1"
+grpc_listen_addr: ":50060"
+
+markets:
+  - "HIP4_TESTNET_BTC_OUTCOME"
+
+venue_nodes:
+  - name: "hip4-node-1"
+    venue: "HIP4"
+    address: "hip4-node:50051"
+
+  - name: "polymarket-node-1"
+    venue: "POLYMARKET"
+    address: "polymarket-node:50052"
+
+  - name: "kalshi-node-1"
+    venue: "KALSHI"
+    address: "kalshi-node:50053"

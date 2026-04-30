@@ -1,0 +1,9 @@
+.git
+.gitignore
+README.md
+*.log
+tmp/
+dist/
+bin/
+.vscode/
+.idea/

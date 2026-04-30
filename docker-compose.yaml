@@ -1,0 +1,46 @@
+services:
+  hip4-node:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["hip4-node", "--config", "/app/configs/hip4-testnet.yaml"]
+    ports:
+      - "50051:50051"
+
+  polymarket-node:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["polymarket-node", "--config", "/app/configs/polymarket.yaml"]
+    ports:
+      - "50052:50052"
+
+  kalshi-node:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["kalshi-node", "--config", "/app/configs/kalshi.yaml"]
+    ports:
+      - "50053:50053"
+
+  aggregator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["aggregator", "--config", "/app/configs/aggregator.docker.yaml"]
+    depends_on:
+      - hip4-node
+      - polymarket-node
+      - kalshi-node
+    ports:
+      - "50060:50060"
+
+  router:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["router", "--config", "/app/configs/router.docker.yaml"]
+    depends_on:
+      - aggregator
+    ports:
+      - "50070:50070"

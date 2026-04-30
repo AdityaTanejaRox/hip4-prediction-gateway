@@ -12,4 +12,4 @@ hyperliquid:
   canonical_market_id: "HIP4_TESTNET_BTC_OUTCOME"
   stale_after_ms: 3000
 
-mock_mode: false
+mock_mode: true
