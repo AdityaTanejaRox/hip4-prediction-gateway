@@ -4,9 +4,10 @@ import (
 	"context"
 	"fmt"
 	"sync"
+	"time"
 
-	"github.com/AdityaTanejaRox/hip4-prediction-gateway/internal/arbitrage"
 	pb "github.com/AdityaTanejaRox/hip4-prediction-gateway/generated/kairosnode"
+	"github.com/AdityaTanejaRox/hip4-prediction-gateway/internal/arbitrage"
 )
 
 type Server struct {
@@ -18,6 +19,9 @@ type Server struct {
 
 	mu          sync.Mutex
 	subscribers map[chan *pb.ArbitrageOpportunity]struct{}
+
+	lastPublished map[string]time.Time
+	dedupeWindow  time.Duration
 }
 
 func NewServer(
@@ -26,10 +30,12 @@ func NewServer(
 	scanner *arbitrage.Scanner,
 ) *Server {
 	return &Server{
-		store:       store,
-		selector:    selector,
-		scanner:     scanner,
-		subscribers: make(map[chan *pb.ArbitrageOpportunity]struct{}),
+		store:         store,
+		selector:      selector,
+		scanner:       scanner,
+		subscribers:   make(map[chan *pb.ArbitrageOpportunity]struct{}),
+		lastPublished: make(map[string]time.Time),
+		dedupeWindow:  2 * time.Second,
 	}
 }
 
@@ -89,7 +95,19 @@ func (s *Server) PublishOpportunities(book *pb.ConsolidatedBook) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
+	now := time.Now()
+
 	for _, opportunity := range opportunities {
+		key := opportunityKey(opportunity)
+
+		if last, ok := s.lastPublished[key]; ok {
+			if now.Sub(last) < s.dedupeWindow {
+				continue
+			}
+		}
+
+		s.lastPublished[key] = now
+
 		for ch := range s.subscribers {
 			select {
 			case ch <- opportunity:
@@ -97,4 +115,15 @@ func (s *Server) PublishOpportunities(book *pb.ConsolidatedBook) {
 			}
 		}
 	}
+}
+
+func opportunityKey(opp *pb.ArbitrageOpportunity) string {
+	return fmt.Sprintf(
+		"%s|%s|%s|%d|%d",
+		opp.CanonicalMarketId,
+		opp.BuyVenue,
+		opp.SellVenue,
+		opp.BuyPriceBps,
+		opp.SellPriceBps,
+	)
 }
