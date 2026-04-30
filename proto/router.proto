@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package kairosnode;
+
+option go_package = "github.com/AdityaTanejaRox/hip4-prediction-gateway/generated/kairosnode;kairosnode";
+
+service Router {
+  rpc SubmitIntent(OrderIntent) returns (RouteDecision);
+  rpc StreamOpportunities(OpportunityRequest) returns (stream ArbitrageOpportunity);
+}
+
+message OrderIntent {
+  string canonical_market_od = 1;
+  string side = 2;
+  int64 quantitiy = 3;
+}
+
+message RouteDecision {
+  string selected_venue = 1;
+  int64 expected_price_bps = 2;
+  int64 expected_quantity = 3;
+  string reason = 4;
+}
+
+message OpportunityRequest {
+  string canonical_market_id = 1;
+}
+
+message ArbitrageOpportunity {
+  string canonical_market_id = 1;
+
+  string buy_venue = 2;
+  string sell_venue = 3;
+
+  int64 buy_price_bps = 4;
+  int64 sell_price_bps = 5;
+
+  int64 gross_edge_bps = 6;
+  int64 net_edge_bps = 7;
+
+  int64 detected_ts_ns = 8;
+}

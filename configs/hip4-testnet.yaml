@@ -1,0 +1,15 @@
+node_id: "hip4-node-1"
+venue: "HIP4"
+environment: "testnet"
+
+grpc_listen_addr: ":50051"
+
+hyperliquid:
+  websocket_url: "wss://api.hyperliquid-testnet.xyz/ws"
+  info_url: "https://api.hyperliquid-testnet.xyz/info"
+  asset: "BTC"
+  venue_market_id: "BTC"
+  canonical_market_id: "HIP4_TESTNET_BTC_OUTCOME"
+  stale_after_ms: 3000
+
+mock_mode: true

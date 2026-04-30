@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package kairosnode;
+
+option go_package = "github.com/AdityaTanejaRox/hip4-prediction-gateway/generated/kairosnode;kairosnode";
+
+service MarketDataNode {
+  rpc StreamTopOfBook(StreamRequest) returns (stream TopOfBookUpdate);
+  rpc GetSnapshot(SnapshotRequest) returns (BookSnapshot);
+  rpc Health(HealthRequest) returns (HealthResponse);
+}
+
+message StreamRequest {
+  repeated string canonical_market_ids = 1;
+}
+
+message SnapshotRequest {
+  string canonical_market_id = 1;
+}
+
+message TopOfBookUpdate {
+  string venue = 1;
+  string venue_market_id = 2;
+  string canonical_market_id = 3;
+
+  int64 yes_bid_price_bps = 4;
+  int64 yes_bid_qty = 5;
+
+  int64 yes_ask_price_bps = 6;
+  int64 yes_ask_qty = 7;
+
+  int64 exchange_ts_ns = 8;
+  int64 receive_ts_ns = 9;
+
+  uint64 sequence = 10;
+
+  bool stale = 11;
+}
+
+message BookSnapshot {
+  string venue = 1;
+  string venue_market_id = 2;
+  string canonical_market_id = 3;
+
+  repeated PriceLevel yes_bids = 4;
+  repeated PriceLevel yes_asks = 5;
+
+  uint64 sequence = 6;
+  int64 receive_ts_ns = 7;
+  bool stale = 8;
+}
+
+message PriceLevel {
+  int64 price_bps = 1;
+  int64 quantity = 2;
+}
+
+message HealthRequest {
+
+}
+
+message HealthResponse {
+  string node_id = 1;
+  string venue = 2;
+
+  bool alive = 3;
+  bool stale = 4;
+
+  int64 last_message_age_ns = 5;
+  uint64 last_sequence = 6;
+
+  string status = 7;
+}
