@@ -44,13 +44,45 @@ func main() {
 		time.Duration(cfg.Hyperliquid.StaleAfterMS)*time.Millisecond,
 	)
 
-	mockFeed := hip4.NewMockFeed(localBook)
+	var updates <-chan domain.TopOfBook
 
-	go func() {
-		if err := mockFeed.Run(ctx); err != nil && ctx.Err() == nil {
-			logger.Error().Err(err).Msg("mock feed stopped")
-		}
-	}()
+	if cfg.MockMode {
+		mockFeed := hip4.NewMockFeed(localBook)
+		updates = mockFeed.Updates()
+
+		go func() {
+			if err := mockFeed.Run(ctx); err != nil && ctx.Err() == nil {
+				logger.Error().Err(err).Msg("mock feed stopped")
+			}
+		}()
+
+		logger.Info().Msg("hip4-node running in mock mode")
+	} else {
+		wsFeed := hip4.NewWSFeed(
+			hip4.WSFeedConfig{
+				WebSocketURL:      cfg.Hyperliquid.WebSocketURL,
+				Asset:             cfg.Hyperliquid.Asset,
+				VenueMarketID:     cfg.Hyperliquid.VenueMarketID,
+				CanonicalMarketID: cfg.Hyperliquid.CanonicalMarketID,
+				ReconnectDelay:    2 * time.Second,
+			},
+			localBook,
+			logger,
+		)
+
+		updates = wsFeed.Updates()
+
+		go func() {
+			if err := wsFeed.Run(ctx); err != nil && ctx.Err() == nil {
+				logger.Error().Err(err).Msg("websocket feed stopped")
+			}
+		}()
+
+		logger.Info().
+			Str("url", cfg.Hyperliquid.WebSocketURL).
+			Str("asset", cfg.Hyperliquid.Asset).
+			Msg("hip4-node running in real websocket mode")
+	}
 
 	listener, err := net.Listen("tcp", cfg.GRPCListenAddr)
 	if err != nil {
@@ -63,7 +95,7 @@ func main() {
 		cfg.NodeID,
 		domain.VenueHIP4,
 		localBook,
-		mockFeed.Updates(),
+		updates,
 	)
 
 	pb.RegisterMarketDataNodeServer(grpcServer, hip4Server)
@@ -71,15 +103,15 @@ func main() {
 	logger.Info().
 		Str("addr", cfg.GRPCListenAddr).
 		Bool("mock_mode", cfg.MockMode).
-		Msg("hip4-node started")
+		Msg("hip4-node grpc server started")
 
 	go func() {
 		<-ctx.Done()
-		logger.Info().Msg("Shutting down hip4-node")
+		logger.Info().Msg("shutting down hip4-node")
 		grpcServer.GracefulStop()
 	}()
 
 	if err := grpcServer.Serve(listener); err != nil {
-		logger.Fatal().Err(err).Msg("GRPC server stopped")
+		logger.Fatal().Err(err).Msg("grpc server stopped")
 	}
 }
