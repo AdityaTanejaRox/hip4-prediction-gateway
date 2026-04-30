@@ -1,0 +1,13 @@
+node_id: "kalshi-node-1"
+venue: "KALSHI"
+environment: "mock"
+
+grpc_listen_addr: ":50053"
+
+kalshi:
+  websocket_url: "wss://api.elections.kalshi.com/trade-api/ws/v2"
+  venue_market_id: "KALSHI_BTC_ABOVE_100K"
+  canonical_market_id: "HIP4_TESTNET_BTC_OUTCOME"
+  stale_after_ms: 3000
+
+mock_mode: true

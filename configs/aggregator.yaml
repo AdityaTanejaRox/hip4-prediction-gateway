@@ -12,3 +12,7 @@ venue_nodes:
   - name: "polymarket-node-1"
     venue: "POLYMARKET"
     address: "localhost:50052"
+
+  - name: "kalshi-node-1"
+    venue: "KALSHI"
+    address: "localhost:50053"
