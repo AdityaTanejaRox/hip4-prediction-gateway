@@ -8,3 +8,7 @@ venue_nodes:
   - name: "hip4-node-1"
     venue: "HIP4"
     address: "localhost:50051"
+
+  - name: "polymarket-node-1"
+    venue: "POLYMARKET"
+    address: "localhost:50052"

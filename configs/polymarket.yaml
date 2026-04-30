@@ -1,0 +1,13 @@
+node_id: "polymarket-node-1"
+venue: "POLYMARKET"
+environment: "mock"
+
+grpc_listen_addr: ":50052"
+
+polymarket:
+  websocket_url: "wss://ws-subscriptions-clob.polymarket.com/ws/market"
+  venue_market_id: "POLY_BTC_ABOVE_100K"
+  canonical_market_id: "HIP4_TESTNET_BTC_OUTCOME"
+  stale_after_ms: 3000
+
+mock_mode: true

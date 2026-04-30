@@ -14,10 +14,12 @@ type Config struct {
 	MockMode       bool   `yaml:"mock_mode"`
 
 	Hyperliquid HyperliquidConfig `yaml:"hyperliquid"`
+	Polymarket  PolymarketConfig  `yaml:"polymarket"`
+	Kalshi      KalshiConfig      `yaml:"kalshi"`
 }
 
 type HyperliquidConfig struct {
-	WebSocketURL       string `yaml:"websocket_url"`
+	WebSocketURL      string `yaml:"websocket_url"`
 	InfoURL           string `yaml:"info_url"`
 	Asset             string `yaml:"asset"`
 	VenueMarketID     string `yaml:"venue_market_id"`
@@ -25,11 +27,25 @@ type HyperliquidConfig struct {
 	StaleAfterMS      int    `yaml:"stale_after_ms"`
 }
 
+type PolymarketConfig struct {
+	WebSocketURL      string `yaml:"websocket_url"`
+	VenueMarketID     string `yaml:"venue_market_id"`
+	CanonicalMarketID string `yaml:"canonical_market_id"`
+	StaleAfterMS      int    `yaml:"stale_after_ms"`
+}
+
+type KalshiConfig struct {
+	WebSocketURL      string `yaml:"websocket_url"`
+	VenueMarketID     string `yaml:"venue_market_id"`
+	CanonicalMarketID string `yaml:"canonical_market_id"`
+	StaleAfterMS      int    `yaml:"stale_after_ms"`
+}
+
 type AggregatorConfig struct {
 	NodeID         string            `yaml:"node_id"`
-	GRPCListenAddr string           `yaml:"grpc_listen_addr"`
-	Markets        []string         `yaml:"markets"`
-	VenueNodes      []VenueNodeConfig `yaml:"venue_nodes"`
+	GRPCListenAddr string            `yaml:"grpc_listen_addr"`
+	Markets        []string          `yaml:"markets"`
+	VenueNodes     []VenueNodeConfig `yaml:"venue_nodes"`
 }
 
 type VenueNodeConfig struct {
@@ -44,7 +60,7 @@ type RouterConfig struct {
 
 	Aggregator AggregatorClientConfig `yaml:"aggregator"`
 	Markets    []string               `yaml:"markets"`
-	Routing    RoutingConfig           `yaml:"routing"`
+	Routing    RoutingConfig          `yaml:"routing"`
 }
 
 type AggregatorClientConfig struct {
@@ -52,8 +68,8 @@ type AggregatorClientConfig struct {
 }
 
 type RoutingConfig struct {
-	MinNetEdgeBps     int64 `yaml:"min_net_edge_bps"`
-	DefaultFeeBps     int64 `yaml:"default_fee_bps"`
+	MinNetEdgeBps      int64 `yaml:"min_net_edge_bps"`
+	DefaultFeeBps      int64 `yaml:"default_fee_bps"`
 	DefaultSlippageBps int64 `yaml:"default_slippage_bps"`
 }
 
