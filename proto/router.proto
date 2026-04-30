@@ -10,9 +10,9 @@ service Router {
 }
 
 message OrderIntent {
-  string canonical_market_od = 1;
+  string canonical_market_id = 1;
   string side = 2;
-  int64 quantitiy = 3;
+  int64 quantity = 3;
 }
 
 message RouteDecision {

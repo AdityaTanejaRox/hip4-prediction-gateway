@@ -17,7 +17,7 @@ type Config struct {
 }
 
 type HyperliquidConfig struct {
-	WebSocketURL      string `yaml:"websocket_url"`
+	WebSocketURL       string `yaml:"websocket_url"`
 	InfoURL           string `yaml:"info_url"`
 	Asset             string `yaml:"asset"`
 	VenueMarketID     string `yaml:"venue_market_id"`
@@ -27,15 +27,34 @@ type HyperliquidConfig struct {
 
 type AggregatorConfig struct {
 	NodeID         string            `yaml:"node_id"`
-	GRPCListenAddr string            `yaml:"grpc_listen_addr"`
-	Markets        []string          `yaml:"markets"`
-	VenueNodes     []VenueNodeConfig `yaml:"venue_nodes"`
+	GRPCListenAddr string           `yaml:"grpc_listen_addr"`
+	Markets        []string         `yaml:"markets"`
+	VenueNodes      []VenueNodeConfig `yaml:"venue_nodes"`
 }
 
 type VenueNodeConfig struct {
 	Name    string `yaml:"name"`
 	Venue   string `yaml:"venue"`
 	Address string `yaml:"address"`
+}
+
+type RouterConfig struct {
+	NodeID         string `yaml:"node_id"`
+	GRPCListenAddr string `yaml:"grpc_listen_addr"`
+
+	Aggregator AggregatorClientConfig `yaml:"aggregator"`
+	Markets    []string               `yaml:"markets"`
+	Routing    RoutingConfig           `yaml:"routing"`
+}
+
+type AggregatorClientConfig struct {
+	Address string `yaml:"address"`
+}
+
+type RoutingConfig struct {
+	MinNetEdgeBps     int64 `yaml:"min_net_edge_bps"`
+	DefaultFeeBps     int64 `yaml:"default_fee_bps"`
+	DefaultSlippageBps int64 `yaml:"default_slippage_bps"`
 }
 
 func Load(path string) (Config, error) {
@@ -61,6 +80,20 @@ func LoadAggregator(path string) (AggregatorConfig, error) {
 	var cfg AggregatorConfig
 	if err := yaml.Unmarshal(raw, &cfg); err != nil {
 		return AggregatorConfig{}, err
+	}
+
+	return cfg, nil
+}
+
+func LoadRouter(path string) (RouterConfig, error) {
+	raw, err := os.ReadFile(path)
+	if err != nil {
+		return RouterConfig{}, err
+	}
+
+	var cfg RouterConfig
+	if err := yaml.Unmarshal(raw, &cfg); err != nil {
+		return RouterConfig{}, err
 	}
 
 	return cfg, nil

@@ -23,9 +23,9 @@ const (
 
 type OrderIntent struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
-	CanonicalMarketOd string                 `protobuf:"bytes,1,opt,name=canonical_market_od,json=canonicalMarketOd,proto3" json:"canonical_market_od,omitempty"`
+	CanonicalMarketId string                 `protobuf:"bytes,1,opt,name=canonical_market_id,json=canonicalMarketId,proto3" json:"canonical_market_id,omitempty"`
 	Side              string                 `protobuf:"bytes,2,opt,name=side,proto3" json:"side,omitempty"`
-	Quantitiy         int64                  `protobuf:"varint,3,opt,name=quantitiy,proto3" json:"quantitiy,omitempty"`
+	Quantity          int64                  `protobuf:"varint,3,opt,name=quantity,proto3" json:"quantity,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -60,9 +60,9 @@ func (*OrderIntent) Descriptor() ([]byte, []int) {
 	return file_router_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *OrderIntent) GetCanonicalMarketOd() string {
+func (x *OrderIntent) GetCanonicalMarketId() string {
 	if x != nil {
-		return x.CanonicalMarketOd
+		return x.CanonicalMarketId
 	}
 	return ""
 }
@@ -74,9 +74,9 @@ func (x *OrderIntent) GetSide() string {
 	return ""
 }
 
-func (x *OrderIntent) GetQuantitiy() int64 {
+func (x *OrderIntent) GetQuantity() int64 {
 	if x != nil {
-		return x.Quantitiy
+		return x.Quantity
 	}
 	return 0
 }
@@ -298,11 +298,11 @@ var File_router_proto protoreflect.FileDescriptor
 const file_router_proto_rawDesc = "" +
 	"\n" +
 	"\frouter.proto\x12\n" +
-	"kairosnode\"o\n" +
+	"kairosnode\"m\n" +
 	"\vOrderIntent\x12.\n" +
-	"\x13canonical_market_od\x18\x01 \x01(\tR\x11canonicalMarketOd\x12\x12\n" +
-	"\x04side\x18\x02 \x01(\tR\x04side\x12\x1c\n" +
-	"\tquantitiy\x18\x03 \x01(\x03R\tquantitiy\"\xa9\x01\n" +
+	"\x13canonical_market_id\x18\x01 \x01(\tR\x11canonicalMarketId\x12\x12\n" +
+	"\x04side\x18\x02 \x01(\tR\x04side\x12\x1a\n" +
+	"\bquantity\x18\x03 \x01(\x03R\bquantity\"\xa9\x01\n" +
 	"\rRouteDecision\x12%\n" +
 	"\x0eselected_venue\x18\x01 \x01(\tR\rselectedVenue\x12,\n" +
 	"\x12expected_price_bps\x18\x02 \x01(\x03R\x10expectedPriceBps\x12+\n" +
