@@ -385,6 +385,210 @@ func (x *PriceLevel) GetQuantity() int64 {
 	return 0
 }
 
+type ConsolidatedBookRequest struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	CanonicalMarketId string                 `protobuf:"bytes,1,opt,name=canonical_market_id,json=canonicalMarketId,proto3" json:"canonical_market_id,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *ConsolidatedBookRequest) Reset() {
+	*x = ConsolidatedBookRequest{}
+	mi := &file_marketdata_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConsolidatedBookRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConsolidatedBookRequest) ProtoMessage() {}
+
+func (x *ConsolidatedBookRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_marketdata_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConsolidatedBookRequest.ProtoReflect.Descriptor instead.
+func (*ConsolidatedBookRequest) Descriptor() ([]byte, []int) {
+	return file_marketdata_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *ConsolidatedBookRequest) GetCanonicalMarketId() string {
+	if x != nil {
+		return x.CanonicalMarketId
+	}
+	return ""
+}
+
+type ConsolidatedBook struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	CanonicalMarketId string                 `protobuf:"bytes,1,opt,name=canonical_market_id,json=canonicalMarketId,proto3" json:"canonical_market_id,omitempty"`
+	YesBids           []*VenueQuote          `protobuf:"bytes,2,rep,name=yes_bids,json=yesBids,proto3" json:"yes_bids,omitempty"`
+	YesAsks           []*VenueQuote          `protobuf:"bytes,3,rep,name=yes_asks,json=yesAsks,proto3" json:"yes_asks,omitempty"`
+	GeneratedTsNs     int64                  `protobuf:"varint,4,opt,name=generated_ts_ns,json=generatedTsNs,proto3" json:"generated_ts_ns,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *ConsolidatedBook) Reset() {
+	*x = ConsolidatedBook{}
+	mi := &file_marketdata_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConsolidatedBook) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConsolidatedBook) ProtoMessage() {}
+
+func (x *ConsolidatedBook) ProtoReflect() protoreflect.Message {
+	mi := &file_marketdata_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConsolidatedBook.ProtoReflect.Descriptor instead.
+func (*ConsolidatedBook) Descriptor() ([]byte, []int) {
+	return file_marketdata_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *ConsolidatedBook) GetCanonicalMarketId() string {
+	if x != nil {
+		return x.CanonicalMarketId
+	}
+	return ""
+}
+
+func (x *ConsolidatedBook) GetYesBids() []*VenueQuote {
+	if x != nil {
+		return x.YesBids
+	}
+	return nil
+}
+
+func (x *ConsolidatedBook) GetYesAsks() []*VenueQuote {
+	if x != nil {
+		return x.YesAsks
+	}
+	return nil
+}
+
+func (x *ConsolidatedBook) GetGeneratedTsNs() int64 {
+	if x != nil {
+		return x.GeneratedTsNs
+	}
+	return 0
+}
+
+type VenueQuote struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Venue         string                 `protobuf:"bytes,1,opt,name=venue,proto3" json:"venue,omitempty"`
+	VenueMarketId string                 `protobuf:"bytes,2,opt,name=venue_market_id,json=venueMarketId,proto3" json:"venue_market_id,omitempty"`
+	PriceBps      int64                  `protobuf:"varint,3,opt,name=price_bps,json=priceBps,proto3" json:"price_bps,omitempty"`
+	Quantity      int64                  `protobuf:"varint,4,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	Sequence      uint64                 `protobuf:"varint,5,opt,name=sequence,proto3" json:"sequence,omitempty"`
+	Stale         bool                   `protobuf:"varint,6,opt,name=stale,proto3" json:"stale,omitempty"`
+	ReceiveTsNs   int64                  `protobuf:"varint,7,opt,name=receive_ts_ns,json=receiveTsNs,proto3" json:"receive_ts_ns,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *VenueQuote) Reset() {
+	*x = VenueQuote{}
+	mi := &file_marketdata_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *VenueQuote) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*VenueQuote) ProtoMessage() {}
+
+func (x *VenueQuote) ProtoReflect() protoreflect.Message {
+	mi := &file_marketdata_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use VenueQuote.ProtoReflect.Descriptor instead.
+func (*VenueQuote) Descriptor() ([]byte, []int) {
+	return file_marketdata_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *VenueQuote) GetVenue() string {
+	if x != nil {
+		return x.Venue
+	}
+	return ""
+}
+
+func (x *VenueQuote) GetVenueMarketId() string {
+	if x != nil {
+		return x.VenueMarketId
+	}
+	return ""
+}
+
+func (x *VenueQuote) GetPriceBps() int64 {
+	if x != nil {
+		return x.PriceBps
+	}
+	return 0
+}
+
+func (x *VenueQuote) GetQuantity() int64 {
+	if x != nil {
+		return x.Quantity
+	}
+	return 0
+}
+
+func (x *VenueQuote) GetSequence() uint64 {
+	if x != nil {
+		return x.Sequence
+	}
+	return 0
+}
+
+func (x *VenueQuote) GetStale() bool {
+	if x != nil {
+		return x.Stale
+	}
+	return false
+}
+
+func (x *VenueQuote) GetReceiveTsNs() int64 {
+	if x != nil {
+		return x.ReceiveTsNs
+	}
+	return 0
+}
+
 type HealthRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -393,7 +597,7 @@ type HealthRequest struct {
 
 func (x *HealthRequest) Reset() {
 	*x = HealthRequest{}
-	mi := &file_marketdata_proto_msgTypes[5]
+	mi := &file_marketdata_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -405,7 +609,7 @@ func (x *HealthRequest) String() string {
 func (*HealthRequest) ProtoMessage() {}
 
 func (x *HealthRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_marketdata_proto_msgTypes[5]
+	mi := &file_marketdata_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -418,7 +622,7 @@ func (x *HealthRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HealthRequest.ProtoReflect.Descriptor instead.
 func (*HealthRequest) Descriptor() ([]byte, []int) {
-	return file_marketdata_proto_rawDescGZIP(), []int{5}
+	return file_marketdata_proto_rawDescGZIP(), []int{8}
 }
 
 type HealthResponse struct {
@@ -427,7 +631,7 @@ type HealthResponse struct {
 	Venue            string                 `protobuf:"bytes,2,opt,name=venue,proto3" json:"venue,omitempty"`
 	Alive            bool                   `protobuf:"varint,3,opt,name=alive,proto3" json:"alive,omitempty"`
 	Stale            bool                   `protobuf:"varint,4,opt,name=stale,proto3" json:"stale,omitempty"`
-	LastMessageAgeNs int64                  `protobuf:"varint,5,opt,name=last_message_age_ns,json=lastMessageAgeNs,proto3" json:"last_message_age_ns,omitempty"`
+	LastMessageAgeMs int64                  `protobuf:"varint,5,opt,name=last_message_age_ms,json=lastMessageAgeMs,proto3" json:"last_message_age_ms,omitempty"`
 	LastSequence     uint64                 `protobuf:"varint,6,opt,name=last_sequence,json=lastSequence,proto3" json:"last_sequence,omitempty"`
 	Status           string                 `protobuf:"bytes,7,opt,name=status,proto3" json:"status,omitempty"`
 	unknownFields    protoimpl.UnknownFields
@@ -436,7 +640,7 @@ type HealthResponse struct {
 
 func (x *HealthResponse) Reset() {
 	*x = HealthResponse{}
-	mi := &file_marketdata_proto_msgTypes[6]
+	mi := &file_marketdata_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -448,7 +652,7 @@ func (x *HealthResponse) String() string {
 func (*HealthResponse) ProtoMessage() {}
 
 func (x *HealthResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_marketdata_proto_msgTypes[6]
+	mi := &file_marketdata_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -461,7 +665,7 @@ func (x *HealthResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HealthResponse.ProtoReflect.Descriptor instead.
 func (*HealthResponse) Descriptor() ([]byte, []int) {
-	return file_marketdata_proto_rawDescGZIP(), []int{6}
+	return file_marketdata_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *HealthResponse) GetNodeId() string {
@@ -492,9 +696,9 @@ func (x *HealthResponse) GetStale() bool {
 	return false
 }
 
-func (x *HealthResponse) GetLastMessageAgeNs() int64 {
+func (x *HealthResponse) GetLastMessageAgeMs() int64 {
 	if x != nil {
-		return x.LastMessageAgeNs
+		return x.LastMessageAgeMs
 	}
 	return 0
 }
@@ -548,20 +752,41 @@ const file_marketdata_proto_rawDesc = "" +
 	"\n" +
 	"PriceLevel\x12\x1b\n" +
 	"\tprice_bps\x18\x01 \x01(\x03R\bpriceBps\x12\x1a\n" +
-	"\bquantity\x18\x02 \x01(\x03R\bquantity\"\x0f\n" +
+	"\bquantity\x18\x02 \x01(\x03R\bquantity\"I\n" +
+	"\x17ConsolidatedBookRequest\x12.\n" +
+	"\x13canonical_market_id\x18\x01 \x01(\tR\x11canonicalMarketId\"\xd0\x01\n" +
+	"\x10ConsolidatedBook\x12.\n" +
+	"\x13canonical_market_id\x18\x01 \x01(\tR\x11canonicalMarketId\x121\n" +
+	"\byes_bids\x18\x02 \x03(\v2\x16.kairosnode.VenueQuoteR\ayesBids\x121\n" +
+	"\byes_asks\x18\x03 \x03(\v2\x16.kairosnode.VenueQuoteR\ayesAsks\x12&\n" +
+	"\x0fgenerated_ts_ns\x18\x04 \x01(\x03R\rgeneratedTsNs\"\xd9\x01\n" +
+	"\n" +
+	"VenueQuote\x12\x14\n" +
+	"\x05venue\x18\x01 \x01(\tR\x05venue\x12&\n" +
+	"\x0fvenue_market_id\x18\x02 \x01(\tR\rvenueMarketId\x12\x1b\n" +
+	"\tprice_bps\x18\x03 \x01(\x03R\bpriceBps\x12\x1a\n" +
+	"\bquantity\x18\x04 \x01(\x03R\bquantity\x12\x1a\n" +
+	"\bsequence\x18\x05 \x01(\x04R\bsequence\x12\x14\n" +
+	"\x05stale\x18\x06 \x01(\bR\x05stale\x12\"\n" +
+	"\rreceive_ts_ns\x18\a \x01(\x03R\vreceiveTsNs\"\x0f\n" +
 	"\rHealthRequest\"\xd7\x01\n" +
 	"\x0eHealthResponse\x12\x17\n" +
 	"\anode_id\x18\x01 \x01(\tR\x06nodeId\x12\x14\n" +
 	"\x05venue\x18\x02 \x01(\tR\x05venue\x12\x14\n" +
 	"\x05alive\x18\x03 \x01(\bR\x05alive\x12\x14\n" +
 	"\x05stale\x18\x04 \x01(\bR\x05stale\x12-\n" +
-	"\x13last_message_age_ns\x18\x05 \x01(\x03R\x10lastMessageAgeNs\x12#\n" +
+	"\x13last_message_age_ms\x18\x05 \x01(\x03R\x10lastMessageAgeMs\x12#\n" +
 	"\rlast_sequence\x18\x06 \x01(\x04R\flastSequence\x12\x16\n" +
 	"\x06status\x18\a \x01(\tR\x06status2\xe4\x01\n" +
 	"\x0eMarketDataNode\x12K\n" +
 	"\x0fStreamTopOfBook\x12\x19.kairosnode.StreamRequest\x1a\x1b.kairosnode.TopOfBookUpdate0\x01\x12D\n" +
 	"\vGetSnapshot\x12\x1b.kairosnode.SnapshotRequest\x1a\x18.kairosnode.BookSnapshot\x12?\n" +
-	"\x06Health\x12\x19.kairosnode.HealthRequest\x1a\x1a.kairosnode.HealthResponseBTZRgithub.com/AdityaTanejaRox/hip4-prediction-gateway/generated/kairosnode;kairosnodeb\x06proto3"
+	"\x06Health\x12\x19.kairosnode.HealthRequest\x1a\x1a.kairosnode.HealthResponse2\x90\x02\n" +
+	"\n" +
+	"Aggregator\x12X\n" +
+	"\x13GetConsolidatedBook\x12#.kairosnode.ConsolidatedBookRequest\x1a\x1c.kairosnode.ConsolidatedBook\x12]\n" +
+	"\x16StreamConsolidatedBook\x12#.kairosnode.ConsolidatedBookRequest\x1a\x1c.kairosnode.ConsolidatedBook0\x01\x12I\n" +
+	"\x10AggregatorHealth\x12\x19.kairosnode.HealthRequest\x1a\x1a.kairosnode.HealthResponseBTZRgithub.com/AdityaTanejaRox/hip4-prediction-gateway/generated/kairosnode;kairosnodeb\x06proto3"
 
 var (
 	file_marketdata_proto_rawDescOnce sync.Once
@@ -575,30 +800,41 @@ func file_marketdata_proto_rawDescGZIP() []byte {
 	return file_marketdata_proto_rawDescData
 }
 
-var file_marketdata_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_marketdata_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_marketdata_proto_goTypes = []any{
-	(*StreamRequest)(nil),   // 0: kairosnode.StreamRequest
-	(*SnapshotRequest)(nil), // 1: kairosnode.SnapshotRequest
-	(*TopOfBookUpdate)(nil), // 2: kairosnode.TopOfBookUpdate
-	(*BookSnapshot)(nil),    // 3: kairosnode.BookSnapshot
-	(*PriceLevel)(nil),      // 4: kairosnode.PriceLevel
-	(*HealthRequest)(nil),   // 5: kairosnode.HealthRequest
-	(*HealthResponse)(nil),  // 6: kairosnode.HealthResponse
+	(*StreamRequest)(nil),           // 0: kairosnode.StreamRequest
+	(*SnapshotRequest)(nil),         // 1: kairosnode.SnapshotRequest
+	(*TopOfBookUpdate)(nil),         // 2: kairosnode.TopOfBookUpdate
+	(*BookSnapshot)(nil),            // 3: kairosnode.BookSnapshot
+	(*PriceLevel)(nil),              // 4: kairosnode.PriceLevel
+	(*ConsolidatedBookRequest)(nil), // 5: kairosnode.ConsolidatedBookRequest
+	(*ConsolidatedBook)(nil),        // 6: kairosnode.ConsolidatedBook
+	(*VenueQuote)(nil),              // 7: kairosnode.VenueQuote
+	(*HealthRequest)(nil),           // 8: kairosnode.HealthRequest
+	(*HealthResponse)(nil),          // 9: kairosnode.HealthResponse
 }
 var file_marketdata_proto_depIdxs = []int32{
-	4, // 0: kairosnode.BookSnapshot.yes_bids:type_name -> kairosnode.PriceLevel
-	4, // 1: kairosnode.BookSnapshot.yes_asks:type_name -> kairosnode.PriceLevel
-	0, // 2: kairosnode.MarketDataNode.StreamTopOfBook:input_type -> kairosnode.StreamRequest
-	1, // 3: kairosnode.MarketDataNode.GetSnapshot:input_type -> kairosnode.SnapshotRequest
-	5, // 4: kairosnode.MarketDataNode.Health:input_type -> kairosnode.HealthRequest
-	2, // 5: kairosnode.MarketDataNode.StreamTopOfBook:output_type -> kairosnode.TopOfBookUpdate
-	3, // 6: kairosnode.MarketDataNode.GetSnapshot:output_type -> kairosnode.BookSnapshot
-	6, // 7: kairosnode.MarketDataNode.Health:output_type -> kairosnode.HealthResponse
-	5, // [5:8] is the sub-list for method output_type
-	2, // [2:5] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	4,  // 0: kairosnode.BookSnapshot.yes_bids:type_name -> kairosnode.PriceLevel
+	4,  // 1: kairosnode.BookSnapshot.yes_asks:type_name -> kairosnode.PriceLevel
+	7,  // 2: kairosnode.ConsolidatedBook.yes_bids:type_name -> kairosnode.VenueQuote
+	7,  // 3: kairosnode.ConsolidatedBook.yes_asks:type_name -> kairosnode.VenueQuote
+	0,  // 4: kairosnode.MarketDataNode.StreamTopOfBook:input_type -> kairosnode.StreamRequest
+	1,  // 5: kairosnode.MarketDataNode.GetSnapshot:input_type -> kairosnode.SnapshotRequest
+	8,  // 6: kairosnode.MarketDataNode.Health:input_type -> kairosnode.HealthRequest
+	5,  // 7: kairosnode.Aggregator.GetConsolidatedBook:input_type -> kairosnode.ConsolidatedBookRequest
+	5,  // 8: kairosnode.Aggregator.StreamConsolidatedBook:input_type -> kairosnode.ConsolidatedBookRequest
+	8,  // 9: kairosnode.Aggregator.AggregatorHealth:input_type -> kairosnode.HealthRequest
+	2,  // 10: kairosnode.MarketDataNode.StreamTopOfBook:output_type -> kairosnode.TopOfBookUpdate
+	3,  // 11: kairosnode.MarketDataNode.GetSnapshot:output_type -> kairosnode.BookSnapshot
+	9,  // 12: kairosnode.MarketDataNode.Health:output_type -> kairosnode.HealthResponse
+	6,  // 13: kairosnode.Aggregator.GetConsolidatedBook:output_type -> kairosnode.ConsolidatedBook
+	6,  // 14: kairosnode.Aggregator.StreamConsolidatedBook:output_type -> kairosnode.ConsolidatedBook
+	9,  // 15: kairosnode.Aggregator.AggregatorHealth:output_type -> kairosnode.HealthResponse
+	10, // [10:16] is the sub-list for method output_type
+	4,  // [4:10] is the sub-list for method input_type
+	4,  // [4:4] is the sub-list for extension type_name
+	4,  // [4:4] is the sub-list for extension extendee
+	0,  // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_marketdata_proto_init() }
@@ -612,9 +848,9 @@ func file_marketdata_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_marketdata_proto_rawDesc), len(file_marketdata_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   10,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   2,
 		},
 		GoTypes:           file_marketdata_proto_goTypes,
 		DependencyIndexes: file_marketdata_proto_depIdxs,

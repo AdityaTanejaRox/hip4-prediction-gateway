@@ -10,6 +10,12 @@ service MarketDataNode {
   rpc Health(HealthRequest) returns (HealthResponse);
 }
 
+service Aggregator {
+  rpc GetConsolidatedBook(ConsolidatedBookRequest) returns (ConsolidatedBook);
+  rpc StreamConsolidatedBook(ConsolidatedBookRequest) returns (stream ConsolidatedBook);
+  rpc AggregatorHealth(HealthRequest) returns (HealthResponse);
+}
+
 message StreamRequest {
   repeated string canonical_market_ids = 1;
 }
@@ -55,9 +61,33 @@ message PriceLevel {
   int64 quantity = 2;
 }
 
-message HealthRequest {
-
+message ConsolidatedBookRequest {
+  string canonical_market_id = 1;
 }
+
+message ConsolidatedBook {
+  string canonical_market_id = 1;
+
+  repeated VenueQuote yes_bids = 2;
+  repeated VenueQuote yes_asks = 3;
+
+  int64 generated_ts_ns = 4;
+}
+
+message VenueQuote {
+  string venue = 1;
+  string venue_market_id = 2;
+
+  int64 price_bps = 3;
+  int64 quantity = 4;
+
+  uint64 sequence = 5;
+  bool stale = 6;
+
+  int64 receive_ts_ns = 7;
+}
+
+message HealthRequest {}
 
 message HealthResponse {
   string node_id = 1;
@@ -66,7 +96,7 @@ message HealthResponse {
   bool alive = 3;
   bool stale = 4;
 
-  int64 last_message_age_ns = 5;
+  int64 last_message_age_ms = 5;
   uint64 last_sequence = 6;
 
   string status = 7;

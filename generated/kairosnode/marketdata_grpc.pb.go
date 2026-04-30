@@ -199,3 +199,185 @@ var MarketDataNode_ServiceDesc = grpc.ServiceDesc{
 	},
 	Metadata: "marketdata.proto",
 }
+
+const (
+	Aggregator_GetConsolidatedBook_FullMethodName    = "/kairosnode.Aggregator/GetConsolidatedBook"
+	Aggregator_StreamConsolidatedBook_FullMethodName = "/kairosnode.Aggregator/StreamConsolidatedBook"
+	Aggregator_AggregatorHealth_FullMethodName       = "/kairosnode.Aggregator/AggregatorHealth"
+)
+
+// AggregatorClient is the client API for Aggregator service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type AggregatorClient interface {
+	GetConsolidatedBook(ctx context.Context, in *ConsolidatedBookRequest, opts ...grpc.CallOption) (*ConsolidatedBook, error)
+	StreamConsolidatedBook(ctx context.Context, in *ConsolidatedBookRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ConsolidatedBook], error)
+	AggregatorHealth(ctx context.Context, in *HealthRequest, opts ...grpc.CallOption) (*HealthResponse, error)
+}
+
+type aggregatorClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewAggregatorClient(cc grpc.ClientConnInterface) AggregatorClient {
+	return &aggregatorClient{cc}
+}
+
+func (c *aggregatorClient) GetConsolidatedBook(ctx context.Context, in *ConsolidatedBookRequest, opts ...grpc.CallOption) (*ConsolidatedBook, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ConsolidatedBook)
+	err := c.cc.Invoke(ctx, Aggregator_GetConsolidatedBook_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aggregatorClient) StreamConsolidatedBook(ctx context.Context, in *ConsolidatedBookRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ConsolidatedBook], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &Aggregator_ServiceDesc.Streams[0], Aggregator_StreamConsolidatedBook_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[ConsolidatedBookRequest, ConsolidatedBook]{ClientStream: stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type Aggregator_StreamConsolidatedBookClient = grpc.ServerStreamingClient[ConsolidatedBook]
+
+func (c *aggregatorClient) AggregatorHealth(ctx context.Context, in *HealthRequest, opts ...grpc.CallOption) (*HealthResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(HealthResponse)
+	err := c.cc.Invoke(ctx, Aggregator_AggregatorHealth_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// AggregatorServer is the server API for Aggregator service.
+// All implementations must embed UnimplementedAggregatorServer
+// for forward compatibility.
+type AggregatorServer interface {
+	GetConsolidatedBook(context.Context, *ConsolidatedBookRequest) (*ConsolidatedBook, error)
+	StreamConsolidatedBook(*ConsolidatedBookRequest, grpc.ServerStreamingServer[ConsolidatedBook]) error
+	AggregatorHealth(context.Context, *HealthRequest) (*HealthResponse, error)
+	mustEmbedUnimplementedAggregatorServer()
+}
+
+// UnimplementedAggregatorServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedAggregatorServer struct{}
+
+func (UnimplementedAggregatorServer) GetConsolidatedBook(context.Context, *ConsolidatedBookRequest) (*ConsolidatedBook, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetConsolidatedBook not implemented")
+}
+func (UnimplementedAggregatorServer) StreamConsolidatedBook(*ConsolidatedBookRequest, grpc.ServerStreamingServer[ConsolidatedBook]) error {
+	return status.Error(codes.Unimplemented, "method StreamConsolidatedBook not implemented")
+}
+func (UnimplementedAggregatorServer) AggregatorHealth(context.Context, *HealthRequest) (*HealthResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AggregatorHealth not implemented")
+}
+func (UnimplementedAggregatorServer) mustEmbedUnimplementedAggregatorServer() {}
+func (UnimplementedAggregatorServer) testEmbeddedByValue()                    {}
+
+// UnsafeAggregatorServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AggregatorServer will
+// result in compilation errors.
+type UnsafeAggregatorServer interface {
+	mustEmbedUnimplementedAggregatorServer()
+}
+
+func RegisterAggregatorServer(s grpc.ServiceRegistrar, srv AggregatorServer) {
+	// If the following call panics, it indicates UnimplementedAggregatorServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&Aggregator_ServiceDesc, srv)
+}
+
+func _Aggregator_GetConsolidatedBook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConsolidatedBookRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AggregatorServer).GetConsolidatedBook(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Aggregator_GetConsolidatedBook_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AggregatorServer).GetConsolidatedBook(ctx, req.(*ConsolidatedBookRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Aggregator_StreamConsolidatedBook_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(ConsolidatedBookRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(AggregatorServer).StreamConsolidatedBook(m, &grpc.GenericServerStream[ConsolidatedBookRequest, ConsolidatedBook]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type Aggregator_StreamConsolidatedBookServer = grpc.ServerStreamingServer[ConsolidatedBook]
+
+func _Aggregator_AggregatorHealth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HealthRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AggregatorServer).AggregatorHealth(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Aggregator_AggregatorHealth_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AggregatorServer).AggregatorHealth(ctx, req.(*HealthRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Aggregator_ServiceDesc is the grpc.ServiceDesc for Aggregator service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Aggregator_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "kairosnode.Aggregator",
+	HandlerType: (*AggregatorServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetConsolidatedBook",
+			Handler:    _Aggregator_GetConsolidatedBook_Handler,
+		},
+		{
+			MethodName: "AggregatorHealth",
+			Handler:    _Aggregator_AggregatorHealth_Handler,
+		},
+	},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "StreamConsolidatedBook",
+			Handler:       _Aggregator_StreamConsolidatedBook_Handler,
+			ServerStreams: true,
+		},
+	},
+	Metadata: "marketdata.proto",
+}

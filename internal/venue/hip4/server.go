@@ -105,7 +105,7 @@ func (s *Server) Health(
 		Venue:            string(s.venue),
 		Alive:            true,
 		Stale:            stale,
-		LastMessageAgeNs: 0,
+		LastMessageAgeMs: 0,
 		LastSequence:     sequence,
 		Status:           status,
 	}, nil
