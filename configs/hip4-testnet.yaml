@@ -11,5 +11,6 @@ hyperliquid:
   venue_market_id: "BTC"
   canonical_market_id: "HIP4_TESTNET_BTC_OUTCOME"
   stale_after_ms: 3000
+  synthetic_price_mode: true
 
 mock_mode: false

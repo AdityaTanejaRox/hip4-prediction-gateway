@@ -60,11 +60,12 @@ func main() {
 	} else {
 		wsFeed := hip4.NewWSFeed(
 			hip4.WSFeedConfig{
-				WebSocketURL:      cfg.Hyperliquid.WebSocketURL,
-				Asset:             cfg.Hyperliquid.Asset,
-				VenueMarketID:     cfg.Hyperliquid.VenueMarketID,
-				CanonicalMarketID: cfg.Hyperliquid.CanonicalMarketID,
-				ReconnectDelay:    2 * time.Second,
+				WebSocketURL:       cfg.Hyperliquid.WebSocketURL,
+				Asset:              cfg.Hyperliquid.Asset,
+				VenueMarketID:      cfg.Hyperliquid.VenueMarketID,
+				CanonicalMarketID:  cfg.Hyperliquid.CanonicalMarketID,
+				ReconnectDelay:     2 * time.Second,
+				SyntheticPriceMode: cfg.Hyperliquid.SyntheticPriceMode,
 			},
 			localBook,
 			logger,

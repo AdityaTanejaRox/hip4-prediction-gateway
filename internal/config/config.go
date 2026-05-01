@@ -19,12 +19,13 @@ type Config struct {
 }
 
 type HyperliquidConfig struct {
-	WebSocketURL      string `yaml:"websocket_url"`
-	InfoURL           string `yaml:"info_url"`
-	Asset             string `yaml:"asset"`
-	VenueMarketID     string `yaml:"venue_market_id"`
-	CanonicalMarketID string `yaml:"canonical_market_id"`
-	StaleAfterMS      int    `yaml:"stale_after_ms"`
+	WebSocketURL       string `yaml:"websocket_url"`
+	InfoURL            string `yaml:"info_url"`
+	Asset              string `yaml:"asset"`
+	VenueMarketID      string `yaml:"venue_market_id"`
+	CanonicalMarketID  string `yaml:"canonical_market_id"`
+	StaleAfterMS       int    `yaml:"stale_after_ms"`
+	SyntheticPriceMode bool   `yaml:"synthetic_price_mode"`
 }
 
 type PolymarketConfig struct {

@@ -17,17 +17,18 @@ import (
 )
 
 type WSFeedConfig struct {
-	WebSocketURL 				string
-	Asset 							string
-	VenueMarketID  			string
-	CanonicalMarketID   string
-	ReconnectDelay 			time.Duration
+	WebSocketURL       string
+	Asset              string
+	VenueMarketID      string
+	CanonicalMarketID  string
+	ReconnectDelay     time.Duration
+	SyntheticPriceMode bool
 }
 
 type WSFeed struct {
-	cfg 				 WSFeedConfig
-	book 				 *book.Book
-	logger 			 zerolog.Logger
+	cfg     WSFeedConfig
+	book    *book.Book
+	logger  zerolog.Logger
 	updates chan domain.TopOfBook
 }
 
@@ -37,10 +38,10 @@ func NewWSFeed(
 	logger zerolog.Logger,
 ) *WSFeed {
 	return &WSFeed{
-		cfg: 				cfg,
-		book: 			book,
-		logger: 		logger,
-		updates:    make(chan domain.TopOfBook, 4096),
+		cfg:     cfg,
+		book:    book,
+		logger:  logger,
+		updates: make(chan domain.TopOfBook, 4096),
 	}
 }
 
@@ -116,9 +117,9 @@ func (w *WSFeed) runOnce(ctx context.Context) error {
 				return
 			case <-ticker.C:
 				_ = conn.WriteControl(
-						websocket.PingMessage,
-						[]byte("ping"),
-						time.Now().Add(5*time.Second),
+					websocket.PingMessage,
+					[]byte("ping"),
+					time.Now().Add(5*time.Second),
 				)
 			}
 		}
@@ -225,12 +226,12 @@ func (w *WSFeed) handleL2Book(
 		return errors.New("l2Book data missing bid/ask levels")
 	}
 
-	bids, err := convertHyperliquidLevelsToOutcomeBps(data.Levels[0])
+	bids, err := convertHyperliquidLevelsToOutcomeBps(data.Levels[0], w.cfg.SyntheticPriceMode)
 	if err != nil {
 		return fmt.Errorf("convert bids: %w", err)
 	}
 
-	asks, err := convertHyperliquidLevelsToOutcomeBps(data.Levels[1])
+	asks, err := convertHyperliquidLevelsToOutcomeBps(data.Levels[1], w.cfg.SyntheticPriceMode)
 	if err != nil {
 		return fmt.Errorf("convert asks: %w", err)
 	}
@@ -256,6 +257,7 @@ func (w *WSFeed) handleL2Book(
 
 func convertHyperliquidLevelsToOutcomeBps(
 	levels []l2BookLevel,
+	syntheticPriceMode bool,
 ) ([]domain.PriceLevel, error) {
 	out := make([]domain.PriceLevel, 0, len(levels))
 
@@ -270,7 +272,7 @@ func convertHyperliquidLevelsToOutcomeBps(
 			return nil, fmt.Errorf("parse size %q: %w", level.Sz, err)
 		}
 
-		priceBps, err := normalizeHyperliquidPriceToOutcomeBps(price)
+		priceBps, err := NormalizeHyperliquidPriceToOutcomeBps(price, syntheticPriceMode)
 		if err != nil {
 			return nil, err
 		}
@@ -289,20 +291,23 @@ func convertHyperliquidLevelsToOutcomeBps(
 	return out, nil
 }
 
-func normalizeHyperliquidPriceToOutcomeBps(price float64) (domain.PriceBps, error) {
-	// HIP-4 outcome contracts should naturally trade in [0, 1].
-	// However, while testing against regular Hyperliquid assets like BTC,
-	// the raw price is not a probability. To keep the pipeline runnable,
-	// we map the observed market price into a bounded synthetic probability.
-	//
-	// When a real HIP-4 outcome asset is available, replace this with:
-	//     return normalize.ProbabilityFloatToBps(price)
+func NormalizeHyperliquidPriceToOutcomeBps(
+	price float64,
+	syntheticPriceMode bool,
+) (domain.PriceBps, error) {
 	if price >= 0.0 && price <= 1.0 {
 		return domain.PriceBps(math.Round(price * 10000.0)), nil
 	}
 
-	// Temporary synthetic conversion for non-HIP4 testnet assets:
-	// compress large prices into a stable probability-like range.
+	if !syntheticPriceMode {
+		return 0, fmt.Errorf(
+			"hyperliquid price %f is outside 0-1 outcome range; enable synthetic_price_mode only for non-HIP4 test assets",
+			price,
+		)
+	}
+
+	// Synthetic conversion for infrastructure testing against regular Hyperliquid assets.
+	// This must not be used for real HIP-4 outcome pricing.
 	normalized := 0.5 + 0.4*math.Tanh((price-50000.0)/50000.0)
 
 	if normalized < 0.0 {
