@@ -44,14 +44,45 @@ func main() {
 		time.Duration(cfg.Polymarket.StaleAfterMS)*time.Millisecond,
 	)
 
-	mockFeed := polymarket.NewMockFeed(localBook)
-	updates := mockFeed.Updates()
+	var updates <-chan domain.TopOfBook
 
-	go func() {
-		if err := mockFeed.Run(ctx); err != nil && ctx.Err() == nil {
-			logger.Error().Err(err).Msg("polymarket mock feed stopped")
-		}
-	}()
+	if cfg.MockMode {
+		mockFeed := polymarket.NewMockFeed(localBook)
+		updates = mockFeed.Updates()
+
+		go func() {
+			if err := mockFeed.Run(ctx); err != nil && ctx.Err() == nil {
+				logger.Error().Err(err).Msg("polymarket mock feed stopped")
+			}
+		}()
+
+		logger.Info().Msg("polymarket-node running in mock mode")
+	} else {
+		wsFeed := polymarket.NewWSFeed(
+			polymarket.WSFeedConfig{
+				WebSocketURL:      cfg.Polymarket.WebSocketURL,
+				AssetIDs:          cfg.Polymarket.AssetIDs,
+				VenueMarketID:     cfg.Polymarket.VenueMarketID,
+				CanonicalMarketID: cfg.Polymarket.CanonicalMarketID,
+				ReconnectDelay:    2 * time.Second,
+			},
+			localBook,
+			logger,
+		)
+
+		updates = wsFeed.Updates()
+
+		go func() {
+			if err := wsFeed.Run(ctx); err != nil && ctx.Err() == nil {
+				logger.Error().Err(err).Msg("polymarket websocket feed stopped")
+			}
+		}()
+
+		logger.Info().
+			Str("url", cfg.Polymarket.WebSocketURL).
+			Strs("asset_ids", cfg.Polymarket.AssetIDs).
+			Msg("polymarket-node running in real websocket mode")
+	}
 
 	listener, err := net.Listen("tcp", cfg.GRPCListenAddr)
 	if err != nil {

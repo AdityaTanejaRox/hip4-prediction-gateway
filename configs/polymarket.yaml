@@ -9,5 +9,6 @@ polymarket:
   venue_market_id: "POLY_BTC_ABOVE_100K"
   canonical_market_id: "HIP4_TESTNET_BTC_OUTCOME"
   stale_after_ms: 3000
+  asset_ids: []
 
-mock_mode: true
+mock_mode: false

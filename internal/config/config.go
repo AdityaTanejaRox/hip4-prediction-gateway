@@ -28,10 +28,11 @@ type HyperliquidConfig struct {
 }
 
 type PolymarketConfig struct {
-	WebSocketURL      string `yaml:"websocket_url"`
-	VenueMarketID     string `yaml:"venue_market_id"`
-	CanonicalMarketID string `yaml:"canonical_market_id"`
-	StaleAfterMS      int    `yaml:"stale_after_ms"`
+	WebSocketURL      string   `yaml:"websocket_url"`
+	VenueMarketID     string   `yaml:"venue_market_id"`
+	CanonicalMarketID string   `yaml:"canonical_market_id"`
+	StaleAfterMS      int      `yaml:"stale_after_ms"`
+	AssetIDs          []string `yaml:"asset_ids"`
 }
 
 type KalshiConfig struct {
