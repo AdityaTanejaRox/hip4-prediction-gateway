@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	pb "github.com/AdityaTanejaRox/hip4-prediction-gateway/generated/kairosnode"
 	"github.com/AdityaTanejaRox/hip4-prediction-gateway/internal/aggregator"
@@ -33,7 +34,9 @@ func main() {
 	)
 	defer cancel()
 
-	store := aggregator.NewStore()
+	store := aggregator.NewStore(
+		time.Duration(cfg.QuoteStaleAfterMS) * time.Millisecond,
+	)
 
 	for _, venueNode := range cfg.VenueNodes {
 		client := aggregator.NewVenueStreamClient(

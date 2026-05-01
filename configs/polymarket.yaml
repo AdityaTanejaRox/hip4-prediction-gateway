@@ -1,14 +1,16 @@
 node_id: "polymarket-node-1"
 venue: "POLYMARKET"
-environment: "mock"
+environment: "demo"
 
 grpc_listen_addr: ":50052"
 
 polymarket:
   websocket_url: "wss://ws-subscriptions-clob.polymarket.com/ws/market"
-  venue_market_id: "POLY_BTC_ABOVE_100K"
-  canonical_market_id: "HIP4_TESTNET_BTC_OUTCOME"
+  venue_market_id: "when-will-bitcoin-hit-150k"
+  canonical_market_id: "BTC_HIT_150K"
   stale_after_ms: 3000
-  asset_ids: []
+  asset_ids:
+  - "13915689317269078219168496739008737517740566192006337297676041270492637394586"
+  - "13290642914521189871602119663452054126359842904805799115978921503195267156991"
 
 mock_mode: false

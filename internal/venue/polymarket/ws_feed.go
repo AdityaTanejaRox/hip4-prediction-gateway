@@ -245,7 +245,7 @@ func (w *WSFeed) handlePriceChange(
 		quantity := int64(math.Round(sizeFloat * 10000.0))
 
 		isBid := strings.EqualFold(change.Side, "BUY") || strings.EqualFold(change.Side, "BID")
-		w.book.ApplyDelta(isBid, priceBps, quantity, sequence, receiveTs)
+		w.book.SetLevel(isBid, priceBps, quantity, sequence, receiveTs)
 	}
 
 	return w.publishTopOfBook(sequence, receiveTs)

@@ -4,9 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"math"
-	"net/http"
-	"os"
 	"strings"
 	"time"
 
@@ -21,8 +18,8 @@ type WSFeedConfig struct {
 	VenueMarketID     string
 	CanonicalMarketID string
 
-	APIKeyEnv    string
-	APISecretEnv string
+	APIKeyID       string
+	PrivateKeyPath string
 
 	ReconnectDelay time.Duration
 }
@@ -56,11 +53,8 @@ func (w *WSFeed) Run(ctx context.Context) error {
 		w.cfg.ReconnectDelay = 2 * time.Second
 	}
 
-	apiKey := os.Getenv(w.cfg.APIKeyEnv)
-	apiSecret := os.Getenv(w.cfg.APISecretEnv)
-
-	if apiKey == "" || apiSecret == "" {
-		return fmt.Errorf("kalshi real websocket mode requires %s and %s env vars", w.cfg.APIKeyEnv, w.cfg.APISecretEnv)
+	if w.cfg.APIKeyID == "" || w.cfg.PrivateKeyPath == "" {
+		return fmt.Errorf("kalshi real websocket mode requires api_key_id and private_key_path")
 	}
 
 	for {
@@ -68,7 +62,7 @@ func (w *WSFeed) Run(ctx context.Context) error {
 			return ctx.Err()
 		}
 
-		err := w.runOnce(ctx, apiKey, apiSecret)
+		err := w.runOnce(ctx, w.cfg.APIKeyID, w.cfg.PrivateKeyPath)
 		if err != nil && ctx.Err() == nil {
 			w.logger.Error().
 				Err(err).
@@ -84,14 +78,11 @@ func (w *WSFeed) Run(ctx context.Context) error {
 	}
 }
 
-func (w *WSFeed) runOnce(ctx context.Context, apiKey string, apiSecret string) error {
-	header := http.Header{}
-
-	// Auth placeholder:
-	// Kalshi authentication may require signed headers depending on the current API version.
-	// Kept this adapter mock-first until exact signing is wired against the current docs.
-	header.Set("KALSHI-ACCESS-KEY", apiKey)
-	header.Set("KALSHI-ACCESS-SIGNATURE", apiSecret)
+func (w *WSFeed) runOnce(ctx context.Context, apiKey string, privateKeyPath string) error {
+	header, err := buildAuthHeaders(apiKey, privateKeyPath)
+	if err != nil {
+		return err
+	}
 
 	dialer := websocket.Dialer{
 		HandshakeTimeout: 10 * time.Second,
@@ -256,10 +247,7 @@ func (w *WSFeed) handleDelta(
 			return err
 		}
 
-		// This skeleton treats delta as absolute if positive.
-		// TODO: confirm whether Kalshi delta is additive or absolute
-		// and maintain level quantities accordingly.
-		w.book.ApplyDelta(true, priceBps, maxInt64(0, msg.Delta), sequence, receiveTs)
+		w.book.ApplyQuantityDelta(true, priceBps, msg.Delta, sequence, receiveTs)
 
 	case "no":
 		yesAskBps, err := NoBidCentsToYesAskBps(msg.Price)
@@ -267,7 +255,7 @@ func (w *WSFeed) handleDelta(
 			return err
 		}
 
-		w.book.ApplyDelta(false, yesAskBps, maxInt64(0, msg.Delta), sequence, receiveTs)
+		w.book.ApplyQuantityDelta(false, yesAskBps, msg.Delta, sequence, receiveTs)
 
 	default:
 		return fmt.Errorf("unknown kalshi side: %s", msg.Side)
@@ -293,8 +281,4 @@ func (w *WSFeed) publishTopOfBook(sequence uint64, receiveTs time.Time) error {
 	}
 
 	return nil
-}
-
-func maxInt64(a int64, b int64) int64 {
-	return int64(math.Max(float64(a), float64(b)))
 }

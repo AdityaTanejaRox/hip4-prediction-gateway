@@ -77,7 +77,7 @@ func TestBookApplyDeltaUpdatesLevels(t *testing.T) {
 		now,
 	)
 
-	localBook.ApplyDelta(true, 5350, 250, 2, now)
+	localBook.SetLevel(true, 5350, 250, 2, now)
 
 	tob, err := localBook.TopOfBook()
 	if err != nil {
@@ -88,7 +88,7 @@ func TestBookApplyDeltaUpdatesLevels(t *testing.T) {
 		t.Fatalf("best bid got %d, want 5350", tob.YesBidPriceBps)
 	}
 
-	localBook.ApplyDelta(true, 5350, 0, 3, now)
+	localBook.SetLevel(true, 5350, 0, 3, now)
 
 	tob, err = localBook.TopOfBook()
 	if err != nil {

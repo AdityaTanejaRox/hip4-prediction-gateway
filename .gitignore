@@ -80,3 +80,4 @@ coverage.out
 *.seed
 *.gz
 *.zip
+secrets/

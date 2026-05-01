@@ -28,16 +28,23 @@ type VenueTopOfBook struct {
 type Store struct {
 	mu sync.RWMutex
 
+	quoteStaleAfter time.Duration
+
 	// canonical_market_id -> venue -> top of book
 	books map[string]map[string]VenueTopOfBook
 
 	subscribers map[chan *pb.ConsolidatedBook]struct{}
 }
 
-func NewStore() *Store {
+func NewStore(quoteStaleAfter time.Duration) *Store {
+	if quoteStaleAfter <= 0 {
+		quoteStaleAfter = 3 * time.Second
+	}
+
 	return &Store{
-		books:       make(map[string]map[string]VenueTopOfBook),
-		subscribers: make(map[chan *pb.ConsolidatedBook]struct{}),
+		quoteStaleAfter: quoteStaleAfter,
+		books:           make(map[string]map[string]VenueTopOfBook),
+		subscribers:     make(map[chan *pb.ConsolidatedBook]struct{}),
 	}
 }
 
@@ -92,7 +99,11 @@ func (s *Store) buildConsolidatedBookLocked(canonicalMarketID string) *pb.Consol
 	bids := make([]*pb.VenueQuote, 0)
 	asks := make([]*pb.VenueQuote, 0)
 
+	now := time.Now()
+
 	for _, tob := range venueBooks {
+		isStale := tob.Stale || tob.ReceiveTs.IsZero() || now.Sub(tob.ReceiveTs) > s.quoteStaleAfter
+
 		if tob.YesBidQty > 0 {
 			bids = append(bids, &pb.VenueQuote{
 				Venue:         tob.Venue,
@@ -100,7 +111,7 @@ func (s *Store) buildConsolidatedBookLocked(canonicalMarketID string) *pb.Consol
 				PriceBps:      int64(tob.YesBidPriceBps),
 				Quantity:      tob.YesBidQty,
 				Sequence:      tob.Sequence,
-				Stale:         tob.Stale,
+				Stale:         isStale,
 				ReceiveTsNs:   tob.ReceiveTs.UnixNano(),
 			})
 		}
@@ -112,7 +123,7 @@ func (s *Store) buildConsolidatedBookLocked(canonicalMarketID string) *pb.Consol
 				PriceBps:      int64(tob.YesAskPriceBps),
 				Quantity:      tob.YesAskQty,
 				Sequence:      tob.Sequence,
-				Stale:         tob.Stale,
+				Stale:         isStale,
 				ReceiveTsNs:   tob.ReceiveTs.UnixNano(),
 			})
 		}
@@ -130,6 +141,6 @@ func (s *Store) buildConsolidatedBookLocked(canonicalMarketID string) *pb.Consol
 		CanonicalMarketId: canonicalMarketID,
 		YesBids:           bids,
 		YesAsks:           asks,
-		GeneratedTsNs:     time.Now().UnixNano(),
+		GeneratedTsNs:     now.UnixNano(),
 	}
 }

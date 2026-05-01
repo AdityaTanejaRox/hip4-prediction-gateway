@@ -70,7 +70,7 @@ func (b *Book) ApplySnapshot(
 	b.lastUpdate = receiveTs
 }
 
-func (b *Book) ApplyDelta(
+func (b *Book) SetLevel(
 	isBid bool,
 	price domain.PriceBps,
 	quantity int64,
@@ -89,6 +89,34 @@ func (b *Book) ApplyDelta(
 		delete(target, price)
 	} else {
 		target[price] = quantity
+	}
+
+	b.lastSequence = sequence
+	b.lastUpdate = receiveTs
+}
+
+func (b *Book) ApplyQuantityDelta(
+	isBid bool,
+	price domain.PriceBps,
+	deltaQuantity int64,
+	sequence uint64,
+	receiveTs time.Time,
+) {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+
+	target := b.yesAsks
+	if isBid {
+		target = b.yesBids
+	}
+
+	currentQuantity := target[price]
+	newQuantity := currentQuantity + deltaQuantity
+
+	if newQuantity <= 0 {
+		delete(target, price)
+	} else {
+		target[price] = newQuantity
 	}
 
 	b.lastSequence = sequence

@@ -1,8 +1,9 @@
 node_id: "aggregator-1"
 grpc_listen_addr: ":50060"
+quote_stale_after_ms: 3000
 
 markets:
-  - "HIP4_TESTNET_BTC_OUTCOME"
+  - "BTC_HIT_150K"
 
 venue_nodes:
   - name: "hip4-node-1"

@@ -42,15 +42,16 @@ type KalshiConfig struct {
 	CanonicalMarketID string `yaml:"canonical_market_id"`
 	StaleAfterMS      int    `yaml:"stale_after_ms"`
 
-	ApiKeyEnv    string `yaml:"api_key_env"`
-	ApiSecretEnv string `yaml:"api_secret_env"`
+	APIKeyID       string `yaml:"api_key_id"`
+	PrivateKeyPath string `yaml:"private_key_path"`
 }
 
 type AggregatorConfig struct {
-	NodeID         string            `yaml:"node_id"`
-	GRPCListenAddr string            `yaml:"grpc_listen_addr"`
-	Markets        []string          `yaml:"markets"`
-	VenueNodes     []VenueNodeConfig `yaml:"venue_nodes"`
+	NodeID            string            `yaml:"node_id"`
+	GRPCListenAddr    string            `yaml:"grpc_listen_addr"`
+	QuoteStaleAfterMS int               `yaml:"quote_stale_after_ms"`
+	Markets           []string          `yaml:"markets"`
+	VenueNodes        []VenueNodeConfig `yaml:"venue_nodes"`
 }
 
 type VenueNodeConfig struct {

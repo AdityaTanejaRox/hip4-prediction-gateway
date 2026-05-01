@@ -2,6 +2,8 @@ package router
 
 import (
 	"context"
+	"fmt"
+	"sync"
 	"time"
 
 	pb "github.com/AdityaTanejaRox/hip4-prediction-gateway/generated/kairosnode"
@@ -74,21 +76,36 @@ func (a *AggregatorClient) runOnce(ctx context.Context) error {
 		Str("address", a.address).
 		Msg("connected to aggregator")
 
+	childCtx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	errCh := make(chan error, len(a.markets))
+	var wg sync.WaitGroup
+
 	for _, market := range a.markets {
 		marketID := market
 
+		wg.Add(1)
 		go func() {
-			if err := a.streamMarket(ctx, client, marketID); err != nil && ctx.Err() == nil {
-				a.logger.Error().
-					Err(err).
-					Str("market", marketID).
-					Msg("market stream stopped")
+			defer wg.Done()
+
+			if err := a.streamMarket(childCtx, client, marketID); err != nil {
+				errCh <- fmt.Errorf("market %s stream failed: %w", marketID, err)
 			}
 		}()
 	}
 
-	<-ctx.Done()
-	return ctx.Err()
+	select {
+	case <-ctx.Done():
+		cancel()
+		wg.Wait()
+		return ctx.Err()
+
+	case err := <-errCh:
+		cancel()
+		wg.Wait()
+		return err
+	}
 }
 
 func (a *AggregatorClient) streamMarket(
