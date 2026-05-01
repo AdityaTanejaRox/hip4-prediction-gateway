@@ -44,14 +44,46 @@ func main() {
 		time.Duration(cfg.Kalshi.StaleAfterMS)*time.Millisecond,
 	)
 
-	mockFeed := kalshi.NewMockFeed(localBook)
-	updates := mockFeed.Updates()
+	var updates <-chan domain.TopOfBook
 
-	go func() {
-		if err := mockFeed.Run(ctx); err != nil && ctx.Err() == nil {
-			logger.Error().Err(err).Msg("kalshi mock feed stopped")
-		}
-	}()
+	if cfg.MockMode {
+		mockFeed := kalshi.NewMockFeed(localBook)
+		updates = mockFeed.Updates()
+
+		go func() {
+			if err := mockFeed.Run(ctx); err != nil && ctx.Err() == nil {
+				logger.Error().Err(err).Msg("kalshi mock feed stopped")
+			}
+		}()
+
+		logger.Info().Msg("kalshi-node running in mock mode")
+	} else {
+		wsFeed := kalshi.NewWSFeed(
+			kalshi.WSFeedConfig{
+				WebSocketURL:      cfg.Kalshi.WebSocketURL,
+				VenueMarketID:     cfg.Kalshi.VenueMarketID,
+				CanonicalMarketID: cfg.Kalshi.CanonicalMarketID,
+				APIKeyEnv:         cfg.Kalshi.ApiKeyEnv,
+				APISecretEnv:      cfg.Kalshi.ApiSecretEnv,
+				ReconnectDelay:    2 * time.Second,
+			},
+			localBook,
+			logger,
+		)
+
+		updates = wsFeed.Updates()
+
+		go func() {
+			if err := wsFeed.Run(ctx); err != nil && ctx.Err() == nil {
+				logger.Error().Err(err).Msg("kalshi websocket feed stopped")
+			}
+		}()
+
+		logger.Info().
+			Str("url", cfg.Kalshi.WebSocketURL).
+			Str("market", cfg.Kalshi.VenueMarketID).
+			Msg("kalshi-node running in real websocket mode")
+	}
 
 	listener, err := net.Listen("tcp", cfg.GRPCListenAddr)
 	if err != nil {

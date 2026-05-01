@@ -40,6 +40,9 @@ type KalshiConfig struct {
 	VenueMarketID     string `yaml:"venue_market_id"`
 	CanonicalMarketID string `yaml:"canonical_market_id"`
 	StaleAfterMS      int    `yaml:"stale_after_ms"`
+
+	ApiKeyEnv    string `yaml:"api_key_env"`
+	ApiSecretEnv string `yaml:"api_secret_env"`
 }
 
 type AggregatorConfig struct {

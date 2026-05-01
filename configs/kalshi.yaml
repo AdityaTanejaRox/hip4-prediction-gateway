@@ -9,5 +9,7 @@ kalshi:
   venue_market_id: "KALSHI_BTC_ABOVE_100K"
   canonical_market_id: "HIP4_TESTNET_BTC_OUTCOME"
   stale_after_ms: 3000
+  api_key_env: "KALSHI_API_KEY"
+  api_secret_env: "KALSHI_API_SECRET"
 
 mock_mode: true
